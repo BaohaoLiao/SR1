@@ -45,6 +45,14 @@ def apply_r1_template(question: str):
         + "\nAssistant: <think>"
     )
 
+def apply_qwen_r1_template(question: str):
+    return (
+        "<|im_start|>system\nA conversation between User and Assistant. The user asks a question, and the assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the summarization of reasoning and final answer. "
+        "The assistant should put the final answer within \\boxed{}. The reasoning process is enclosed within <think> </think>. The summarization of reasoning and answer are placed after </think>. I.e., <think> reasoning process here </think> summatization of reasoning and \\boxed{answer} here.<|im_end|>\n"
+        "<|im_start|>user\n" + question
+        + "<|im_end|>\n<|im_start|>assistant\n"
+    )
+
 
 # The following two templates are used to evaluate baselines from other projects.
 def apply_prime_zero_template(question: str):
@@ -167,6 +175,10 @@ def main(
                 tokenize=False,
                 add_generation_prompt=True,
             )
+        
+    elif template == "qwen_r1":
+        math_reward_fn = boxed_reward_fn
+        apply_template = apply_qwen_r1_template
 
     else:
         raise ValueError
