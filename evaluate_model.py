@@ -96,12 +96,16 @@ def main(
         seed=seed,
     )
 
+    available_gpus = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
     model = vllm.LLM(
         model_name,
-        swap_space=32,
         max_model_len=max_model_len,
         dtype="bfloat16",
         enable_prefix_caching=True,
+        trust_remote_code=True,
+        tensor_parallel_size=len(available_gpus),
+        gpu_memory_utilization=0.95,
+        seed=seed,
     )
 
     if "prime" in model_name.lower():
