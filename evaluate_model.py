@@ -225,6 +225,10 @@ def main(
             formatted[task_name] = np.mean(batch_formatted)
         max_lens[task_name] = np.max(batch_lengths)
 
+        print(f"acc:{results[task_name]}, avg length: {max_lens[task_name]}, max length: {max_lens[task_name]}")
+        if task_name in formatted:
+            print(f"formatted: {formatted[task_name]}")
+
         if save:
             fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
             os.makedirs(fn, exist_ok=True)
@@ -232,10 +236,6 @@ def main(
             fn = f"{fn}/template{template}_temp{temperature}topp{top_p}_n{n_samples}_seed{seed}.json"
             print(f"saving model outputs for {task_name} at {fn}")
             json.dump(to_be_saved, open(fn,"w",), indent=4)
-
-        print(f"acc:{results[task_name]}, avg length: {max_lens[task_name]}, max length: {max_lens[task_name]}")
-        if task_name in formatted:
-            print(f"formatted: {formatted[task_name]}")
 
     print("=" * 25, "Summary", "=" * 25)
     print(results)
