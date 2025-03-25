@@ -47,7 +47,7 @@ def apply_r1_template(question: str):
 
 def apply_qwen_r1_template(question: str):
     return (
-        "<|im_start|>system\nA conversation between User and Assistant. The user asks a question, and the assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the summarization of reasoning and final answer. "
+        "<|im_start|>system\nA conversation between user and assistant. The user asks a question, and the assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the summarization of reasoning and final answer. "
         "The assistant should put the final answer within \\boxed{}. The reasoning process is enclosed within <think> </think>. The summarization of reasoning and answer are placed after </think>. I.e., <think> reasoning process here </think> summatization of reasoning and \\boxed{answer} here.<|im_end|>\n"
         "<|im_start|>user\n" + question
         + "<|im_end|>\n<|im_start|>assistant\n"
