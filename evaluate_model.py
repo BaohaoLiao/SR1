@@ -12,17 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import json
-import time
-
 import fire
 import numpy as np
+
 import vllm
 from jinja2 import Template
-
 from datasets import load_from_disk
-from understand_r1_zero.math_grader import (answer_tag_reward_fn,
-                                            boxed_reward_fn)
+
+from utils.math_grader import (
+    answer_tag_reward_fn, 
+    boxed_reward_fn, 
+    answer_tag_reward_fn_for_orz,
+)
+
 
 
 def apply_qwen_math_template(question: str):
@@ -71,7 +75,7 @@ def main(
     model_name: str = "Qwen/Qwen2.5-Math-1.5B",
     tasks: list = ["aime", "amc", "math", "minerva", "olympiad_bench"],
     template: str = "qwen_math",
-    dataset_name: str = "./datasets/evaluation_suite",
+    dataset_name: str = "./datas/evaluation_suite",
     temperature: float = 0,
     top_p: float = 1,
     max_tokens: int = 3000,
@@ -79,6 +83,8 @@ def main(
     n_samples: int = 1,
     max_test: int = 999999,
     save: bool = False,
+    seed: int = 0,
+    output_dir: str = "./outputs",
 ):
 
     sampling_params = vllm.SamplingParams(
@@ -87,7 +93,7 @@ def main(
         top_p=top_p,
         max_tokens=max_tokens,
         logprobs=2,
-        seed=int(time.time_ns()),
+        seed=seed,
     )
 
     model = vllm.LLM(
@@ -111,14 +117,6 @@ def main(
     print("Using template:", template)
     if template in ["qwen_math", "no"]:
         math_reward_fn = boxed_reward_fn
-        # sampling_params.stop = [
-        #     "</s>",
-        #     "<|im_end|>",
-        #     "<|endoftext|>",
-        #     "<|im_start|>",
-        #     "\nUser:",
-        # ]
-        # sampling_params.stop_token_ids = [151645, 151643]
         if template == "qwen_math":
             apply_template = apply_qwen_math_template
         else:
@@ -133,16 +131,12 @@ def main(
         math_reward_fn = boxed_reward_fn
         apply_template = apply_prime_zero_template
     elif template == "open-reasoner-zero":
-        from understand_r1_zero.math_grader import answer_tag_reward_fn_for_orz
-
         math_reward_fn = answer_tag_reward_fn_for_orz
         apply_template = apply_open_reasoner_zero_template
     elif template == "llama-instruct":
-
         from transformers import AutoTokenizer
 
         math_reward_fn = boxed_reward_fn
-
         tokenizer = AutoTokenizer.from_pretrained(model_name)
 
         def apply_template(question):
@@ -161,7 +155,6 @@ def main(
         from transformers import AutoTokenizer
 
         math_reward_fn = boxed_reward_fn
-
         tokenizer = AutoTokenizer.from_pretrained(model_name)
 
         def apply_template(question):
@@ -178,8 +171,9 @@ def main(
     avg_lens = {}
     max_lens = {}
     formatted = {}
-    to_be_saved = []
     for task_name, dataset in load_from_disk(dataset_name).items():
+        to_be_saved = []
+
         if task_name not in tasks:
             continue
         prompts = dataset["problem"][:max_test]
@@ -212,7 +206,7 @@ def main(
                     "prompt": output.prompt,
                     "gt": gt_repeated,
                     "model_output": [o.text for o in output.outputs],
-                    "model_output_token_ids": [o.token_ids for o in output.outputs],
+                    #"model_output_token_ids": [o.token_ids for o in output.outputs],
                     "reward": [r for r in rewards],
                 }
             )
@@ -223,24 +217,25 @@ def main(
             formatted[task_name] = np.mean(batch_formatted)
         max_lens[task_name] = np.max(batch_lengths)
 
+        if save:
+            fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
+            fn = f"{fn}/template{template}_temp{temperature}topp{top_p}_n{n_samples}_seed{seed}.json"
+            os.makedirs(fn, exist_ok=True)
+
+            print(f"saving model outputs for {task_name} at {fn}")
+            json.dump(to_be_saved, open(fn,"w",), indent=4)
+
+        print("=" * 25, task_name, "=" * 25)
+        print(f"acc:{results[task_name]}, avg length: {max_lens[task_name]}, max length: {max_lens[task_name]}")
+        if task_name in formatted:
+            print(f"formatted: {formatted[task_name]}")
+
     print(results)
-    print("avg:", np.mean(list(results.values())))
+    print("avg acc:", np.mean(list(results.values())))
     print("avg_lens:", avg_lens)
     print("max_lens:", max_lens)
     print("formatted:", formatted)
 
-    if save:
-        fn = "model_eval_out_" + model_name.replace("/", "_") + str(int(time.time()))
-        fn = f"{fn}_template_{template}_temp{temperature}_topp{top_p}_n{n_samples}.json"
-        print(f"saving model outputs at {fn}")
-        json.dump(
-            to_be_saved,
-            open(
-                fn,
-                "w",
-            ),
-            indent=4,
-        )
-
-
-fire.Fire(main)
+    
+if __name__ == "__main__":
+    fire.Fire(main)
