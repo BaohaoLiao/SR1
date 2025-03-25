@@ -58,7 +58,7 @@ def apply_qwen_r1_template(question: str):
 def apply_prime_zero_template(question: str):
     """https://huggingface.co/PRIME-RL/Eurus-2-7B-PRIME-Zero"""
     question = question + "\n\nPresent the answer in LaTex format: \\boxed{Your answer}"
-    return f"A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: {question}. Assistant:"
+    return f"A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The Assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: {question}. Assistant:"
 
 
 def apply_open_reasoner_zero_template(question: str):
