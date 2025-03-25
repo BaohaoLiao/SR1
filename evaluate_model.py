@@ -237,6 +237,7 @@ def main(
         if task_name in formatted:
             print(f"formatted: {formatted[task_name]}")
 
+    print("=" * 25, "Summary", "=" * 25)
     print(results)
     print("avg acc:", np.mean(list(results.values())))
     print("avg_lens:", avg_lens)
