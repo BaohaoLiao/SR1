@@ -239,7 +239,7 @@ def main(
             formatted[task_name] = np.mean(batch_formatted)
         max_lens[task_name] = np.max(batch_lengths)
 
-        print(f"acc:{results[task_name]}, avg length: {max_lens[task_name]}, max length: {max_lens[task_name]}")
+        print(f"acc:{results[task_name]}, avg length: {avg_lens[task_name]}, max length: {max_lens[task_name]}")
         if task_name in formatted:
             print(f"formatted: {formatted[task_name]}")
 
