@@ -184,7 +184,11 @@ def main(
         targets = dataset["answer"][:max_test]
 
         prompts = list(map(apply_template, prompts))
-        print("inference for ", task_name)
+
+        print("=" * 50)
+        print(f"{task_name}: {len(prompts)}")
+        print(prompts[0])
+
         outputs = model.generate(prompts, sampling_params)
         batch_scores = []
         batch_formatted = []
@@ -223,13 +227,12 @@ def main(
 
         if save:
             fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
-            fn = f"{fn}/template{template}_temp{temperature}topp{top_p}_n{n_samples}_seed{seed}.json"
             os.makedirs(fn, exist_ok=True)
 
+            fn = f"{fn}/template{template}_temp{temperature}topp{top_p}_n{n_samples}_seed{seed}.json"
             print(f"saving model outputs for {task_name} at {fn}")
             json.dump(to_be_saved, open(fn,"w",), indent=4)
 
-        print("=" * 25, task_name, "=" * 25)
         print(f"acc:{results[task_name]}, avg length: {max_lens[task_name]}, max length: {max_lens[task_name]}")
         if task_name in formatted:
             print(f"formatted: {formatted[task_name]}")
