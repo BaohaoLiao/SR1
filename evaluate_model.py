@@ -86,6 +86,7 @@ def main(
     dataset_name: str = "./datas/evaluation_suite",
     temperature: float = 0,
     top_p: float = 1,
+    min_p: float = 0,
     max_tokens: int = 3000,
     max_model_len: int = 4096,  # VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 for longer ones.
     n_samples: int = 1,
@@ -99,6 +100,7 @@ def main(
         n=n_samples,
         temperature=temperature,
         top_p=top_p,
+        min_p=min_p,
         max_tokens=max_tokens,
         logprobs=2,
         seed=seed,
@@ -245,7 +247,7 @@ def main(
             fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
             os.makedirs(fn, exist_ok=True)
 
-            fn = f"{fn}/template{template}_temp{temperature}topp{top_p}_n{n_samples}_seed{seed}.json"
+            fn = f"{fn}/template_{template}_temp{temperature}topp{top_p}minp{min_p}_n{n_samples}_seed{seed}.json"
             print(f"saving model outputs for {task_name} at {fn}")
             json.dump(to_be_saved, open(fn,"w",), indent=4)
 
