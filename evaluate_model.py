@@ -135,7 +135,6 @@ def main(
             apply_template = apply_qwen_math_template
         else:
             apply_template = lambda x: x
-
     elif template == "r1":
         math_reward_fn = answer_tag_reward_fn
         sampling_params.stop = ["</answer>"]
