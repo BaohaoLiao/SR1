@@ -229,6 +229,7 @@ def main(
                     "model_output": [o.text for o in output.outputs],
                     #"model_output_token_ids": [o.token_ids for o in output.outputs],
                     "reward": [r for r in rewards],
+                    "formatted": [i["formatted"] for i in infos],
                 }
             )
 
