@@ -232,7 +232,7 @@ def main(
             batch_scores.append(rewards.mean())
 
             if infos[0] is not {}:
-                batch_formatted.append(np.array([i["formatted"] for i in infos]).sum())
+                batch_formatted.append(np.mean([i["formatted"] for i in infos]))
 
             to_be_saved.append(
                 {
