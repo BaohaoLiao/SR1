@@ -107,7 +107,6 @@ def main(
     start: int = 0,
     end: int = -1,
 ):
-
     sampling_params = vllm.SamplingParams(
         n=n_samples,
         temperature=temperature,
@@ -116,6 +115,7 @@ def main(
         max_tokens=max_tokens,
         logprobs=2,
         seed=seed,
+        skip_special_tokens=False
     )
 
     available_gpus = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
