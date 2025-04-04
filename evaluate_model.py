@@ -104,6 +104,7 @@ def main(
     save: bool = False,
     seed: int = 0,
     output_dir: str = "./outputs",
+    max_num_seqs: int = 256,
 ):
 
     sampling_params = vllm.SamplingParams(
@@ -126,6 +127,7 @@ def main(
         tensor_parallel_size=len(available_gpus),
         gpu_memory_utilization=0.95,
         seed=seed,
+        max_num_seqs=max_num_seqs,
     )
 
     if "prime" in model_name.lower():
