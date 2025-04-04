@@ -100,11 +100,12 @@ def main(
     max_tokens: int = 3000,
     max_model_len: int = 4096,  # VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 for longer ones.
     n_samples: int = 1,
-    max_test: int = 999999,
     save: bool = False,
     seed: int = 0,
     output_dir: str = "./outputs",
     max_num_seqs: int = 256,
+    start: int = 0,
+    end: int = -1,
 ):
 
     sampling_params = vllm.SamplingParams(
@@ -208,8 +209,13 @@ def main(
 
         if task_name not in tasks:
             continue
-        prompts = dataset["problem"][:max_test]
-        targets = dataset["answer"][:max_test]
+
+        if end != -1:
+            prompts = dataset["problem"][start:end]
+            targets = dataset["answer"][start:end]
+        else:
+            prompts = dataset["problem"][start:]
+            targets = dataset["answer"][start:]
 
         prompts = list(map(apply_template, prompts))
 
@@ -262,7 +268,7 @@ def main(
             fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
             os.makedirs(fn, exist_ok=True)
 
-            fn = f"{fn}/template_{template}_temp{temperature}topp{top_p}minp{min_p}_n{n_samples}_seed{seed}.json"
+            fn = f"{fn}/template_{template}_temp{temperature}topp{top_p}minp{min_p}_n{n_samples}_seed{seed}_start{start}end{end}.json"
             print(f"saving model outputs for {task_name} at {fn}")
             json.dump(to_be_saved, open(fn,"w",), indent=4)
 
