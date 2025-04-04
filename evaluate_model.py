@@ -45,6 +45,16 @@ def apply_r1_template(question: str):
         + "\nAssistant: <think>"
     )
 
+
+def apply_new_r1_template(question: str):
+    return (
+        "A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The Assistant first thinks about the reasoning process in the mind and then provides the User with the answer. "
+        "The reasoning process is enclosed within <think> </think> tags. And the final answer should be placed within \\boxed{}, i.e., <think> reasoning process here </think> \\boxed{answer} here."
+        "\nUser: " + question
+        + "\nAssistant: "
+    )
+
+
 def apply_qwen_r1_template(question: str):
     return (
         "<|im_start|>system\nA conversation between user and assistant. The user asks a question, and the assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the final answer. "
@@ -140,6 +150,9 @@ def main(
         sampling_params.stop = ["</answer>"]
         sampling_params.include_stop_str_in_output = True
         apply_template = apply_r1_template
+    elif template == "new_r1":
+        math_reward_fn = boxed_reward_fn
+        apply_template = apply_new_r1_template
     elif template == "prime-zero":
         math_reward_fn = boxed_reward_fn
         apply_template = apply_prime_zero_template
