@@ -51,7 +51,7 @@ def apply_new_r1_template(question: str):
         "A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The Assistant first thinks about the reasoning process in the mind and then provides the User with the answer. "
         "The reasoning process is enclosed within <think> </think> tags. And the final answer should be placed within \\boxed{}, i.e., <think> reasoning process here </think> \\boxed{answer} here."
         "\nUser: " + question
-        + "\nAssistant: </think>\n"
+        + "\nAssistant: <think>\n"
     )
 
 
