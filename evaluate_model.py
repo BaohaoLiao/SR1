@@ -200,7 +200,7 @@ def main(
 
         def apply_template(question):
             return tokenizer.apply_chat_template(
-                [{"content": question, "role": "user"}],
+                [{"content": question + "\nPlease reason step by step, and put your final answer within \\boxed{}.", "role": "user"}],
                 tokenize=False,
                 add_generation_prompt=True,
             )
