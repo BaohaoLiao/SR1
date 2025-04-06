@@ -280,7 +280,7 @@ def main(
             fn = os.path.join(output_dir, model_name.split("/")[-1], task_name)
             os.makedirs(fn, exist_ok=True)
 
-            fn = f"{fn}/template_{template}_temp{temperature}topp{top_p}minp{min_p}_n{n_samples}_seed{seed}_start{start}end{end}.json"
+            fn = f"{fn}/template_{template}_temp{temperature}topp{top_p}minp{min_p}_n{n_samples}_seed{seed}_start{start}end{end}_len{max_tokens}.json"
             print(f"saving model outputs for {task_name} at {fn}")
             json.dump(to_be_saved, open(fn,"w",), indent=4)
 
