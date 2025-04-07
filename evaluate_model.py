@@ -100,7 +100,7 @@ This is the problem:
 
 def main(
     model_name: str = "Qwen/Qwen2.5-Math-1.5B",
-    tasks: list = ["aime", "amc", "math", "minerva", "olympiad_bench"],
+    tasks: list = ["aime24", "aime25", "math500", "gpqa_diamond"],
     template: str = "qwen_math",
     dataset_name: str = "./datas/evaluation_suite",
     temperature: float = 0,
