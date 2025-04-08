@@ -220,8 +220,6 @@ def main(
         to_be_saved = []
 
         if task_name not in tasks:
-            print(f"Couldn't find {task_name} in {dataset_name}")
-            print(load_from_disk(dataset_name))
             continue
 
         if end != -1:
